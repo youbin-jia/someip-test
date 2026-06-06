@@ -1,0 +1,19 @@
+# 示例 4 — 多客户端 + SD
+
+cc_binary(
+    name = "service",
+    srcs = ["service.cpp"],
+    deps = ["//third_party/vsomeip"],
+)
+
+cc_binary(
+    name = "client1",
+    srcs = ["client1.cpp"],
+    deps = ["//third_party/vsomeip"],
+)
+
+cc_binary(
+    name = "client2",
+    srcs = ["client2.cpp"],
+    deps = ["//third_party/vsomeip"],
+)

@@ -1,0 +1,32 @@
+{
+    "_comment": "service 端 - 示例 4 多客户端 + SD。Service=0x4444, Instance=0x0001, Method=0x0421, Event=0x8004。",
+
+    "unicast": "127.0.0.1",
+    "logging": { "level": "info", "console": "true", "file": { "enable": "false" }, "dlt": "false" },
+
+    "applications": [ { "name": "service", "id": "0x4001" } ],
+
+    "services": [
+        {
+            "service":  "0x4444",
+            "instance": "0x0001",
+            "reliable": { "port": "30504" },
+            "unreliable": "30505",
+            "events": [
+                { "event": "0x8004", "is_field": "false", "is_reliable": "false" }
+            ],
+            "eventgroups": [
+                { "eventgroup": "0x0004", "events": [ "0x8004" ] }
+            ]
+        }
+    ],
+
+    "routing": "service",
+    "service-discovery": {
+        "enable":    "true",
+        "multicast": "224.244.224.245",
+        "port":      "30490",
+        "protocol":  "udp",
+        "cyclic_offer_delay": "2000"
+    }
+}

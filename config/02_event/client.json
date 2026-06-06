@@ -1,0 +1,16 @@
+{
+    "_comment": "client 端 - 示例 2 Event 订阅者",
+
+    "unicast": "127.0.0.1",
+    "logging": { "level": "info", "console": "true", "file": { "enable": "false" }, "dlt": "false" },
+
+    "applications": [ { "name": "client", "id": "0x2002" } ],
+
+    "routing": "service",
+    "service-discovery": {
+        "enable":    "true",
+        "multicast": "224.244.224.245",
+        "port":      "30490",
+        "protocol":  "udp"
+    }
+}

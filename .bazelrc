@@ -1,0 +1,11 @@
+# 关闭 bzlmod, 沿用 WORKSPACE 模式 (bazel 7 默认开了 bzlmod)
+common --enable_bzlmod=false
+
+# C++ 标准
+build --cxxopt=-std=c++17
+build --host_cxxopt=-std=c++17
+
+# vsomeip 头文件用了大量编译期日志, -Wno-... 让输出清爽些
+build --cxxopt=-Wall
+build --cxxopt=-Wno-unused-parameter
+build --cxxopt=-Wno-deprecated-declarations

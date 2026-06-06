@@ -1,0 +1,13 @@
+# 示例 3 — Field
+
+cc_binary(
+    name = "service",
+    srcs = ["service.cpp"],
+    deps = ["//third_party/vsomeip"],
+)
+
+cc_binary(
+    name = "client",
+    srcs = ["client.cpp"],
+    deps = ["//third_party/vsomeip"],
+)

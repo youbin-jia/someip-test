@@ -1,0 +1,16 @@
+{
+    "_comment": "client2 - 示例 4。订阅事件,演示同一服务被多客户端共用。",
+
+    "unicast": "127.0.0.1",
+    "logging": { "level": "info", "console": "true", "file": { "enable": "false" }, "dlt": "false" },
+
+    "applications": [ { "name": "client2", "id": "0x4003" } ],
+
+    "routing": "service",
+    "service-discovery": {
+        "enable":    "true",
+        "multicast": "224.244.224.245",
+        "port":      "30490",
+        "protocol":  "udp"
+    }
+}

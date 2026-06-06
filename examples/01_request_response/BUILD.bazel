@@ -1,0 +1,15 @@
+# 示例 1 — Request/Response
+#
+# 两个独立的 cc_binary,各自 link 到第三方 vsomeip 包装库。
+
+cc_binary(
+    name = "service",
+    srcs = ["service.cpp"],
+    deps = ["//third_party/vsomeip"],
+)
+
+cc_binary(
+    name = "client",
+    srcs = ["client.cpp"],
+    deps = ["//third_party/vsomeip"],
+)

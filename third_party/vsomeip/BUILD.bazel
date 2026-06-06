@@ -1,0 +1,25 @@
+# 把"系统装在 /usr/local 的 vsomeip3"包装成 bazel 能直接 deps 的 cc_library
+#
+# 原理:
+#   - hdrs 留空 (头文件由 -isystem 自动找到, 不参与依赖追踪)
+#   - 用 includes + linkopts 把搜索路径和 -lvsomeip3 注入到任何依赖它的 target
+#   - 同时还要拉上 boost-system / pthread / dl, 这些是 vsomeip3 运行时必需
+
+cc_library(
+    name = "vsomeip",
+    visibility = ["//visibility:public"],
+    includes = ["/usr/local/include"],
+    # 注: bazel 沙盒看不到 /usr/local, 但 linkopts 在最终链接时由系统 ld 解析,
+    # 因此 -L/usr/local/lib + -lvsomeip3 是可行的。
+    linkopts = [
+        "-L/usr/local/lib",
+        "-lvsomeip3",
+        "-lvsomeip3-cfg",
+        "-lvsomeip3-sd",
+        "-lboost_system",
+        "-lboost_thread",
+        "-lboost_filesystem",
+        "-lpthread",
+        "-ldl",
+    ],
+)

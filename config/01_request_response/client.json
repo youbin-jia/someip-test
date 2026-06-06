@@ -1,0 +1,22 @@
+{
+    "_comment": "client 端配置 - 示例 1。client 不 offer 服务, 只 request。注意 routing 仍指向 service - 因为同一台主机上只有一个 routing-manager。",
+
+    "unicast": "127.0.0.1",
+    "logging": {
+        "level": "info", "console": "true",
+        "file":  { "enable": "false" }, "dlt": "false"
+    },
+
+    "applications": [
+        { "name": "client", "id": "0x1002" }
+    ],
+
+    "routing": "service",
+
+    "service-discovery": {
+        "enable":    "true",
+        "multicast": "224.244.224.245",
+        "port":      "30490",
+        "protocol":  "udp"
+    }
+}

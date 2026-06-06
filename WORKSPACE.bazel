@@ -1,0 +1,10 @@
+# WORKSPACE.bazel
+#
+# 本项目把 vsomeip3 当作"系统装好的预编译库"来对待:
+# 第三方包装规则在 //third_party/vsomeip:vsomeip,它通过 cc_library 暴露
+# /usr/local/include 的头文件 + linkopts 链接 -lvsomeip3。
+#
+# 因此 WORKSPACE 本身不需要拉取任何远程仓库 —— 保持空白即可。
+# 如果将来要切换到 bzlmod (MODULE.bazel),把这文件删掉、用 MODULE.bazel 替代即可。
+
+workspace(name = "someip_test")
