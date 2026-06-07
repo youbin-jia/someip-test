@@ -68,8 +68,9 @@ vsomeip 的运行时几乎完全由 JSON 驱动 —— 即使是同一份代码,
         }
     ],
 
-    // ─── client 的预订阅声明 (可选) ───────────────────────────────
-    // 不写也能工作, 写了等于"开机就请求订阅", 减少代码
+    // ─── client 的静态远端声明 (可选) ─────────────────────────────
+    // 开启 SD 时通常不写,client 依赖 FindService/OfferService 发现远端服务
+    // 关闭 SD 时才需要写,用来静态指定远端服务端口
     "clients": [
         {
             "service":  "0x2222",
@@ -141,6 +142,106 @@ vsomeip 的运行时几乎完全由 JSON 驱动 —— 即使是同一份代码,
 ### `clients[]` 必要性
 
 `clients[]` 在 SD 关闭、需要静态指向远端 IP/端口时使用;在我们这些走 SD 的例子里**完全可以省略**。
+省略时,client 依赖 SOME/IP-SD 的 `FindService` / `OfferService` 找到 service 的地址和端口。
+
+### 多 service / 多 client 场景
+
+配置规则:
+
+1. 每个进程都要在自己的 JSON 里声明自己的 `applications[].name`。
+2. 同一台机器上的所有 vsomeip 进程,`routing` 必须指向同一个 application name。
+3. offer 服务的进程,在 `services[]` 里声明自己提供的服务。
+4. client 进程如果走 SD,通常只需要写 `applications`、`routing`、`service-discovery`,不需要写 `services[]` 或 `clients[]`。
+
+例如 1 个 service + 2 个 client:
+
+```json
+// service.json
+{
+    "applications": [
+        { "name": "service", "id": "0x4001" }
+    ],
+    "services": [
+        {
+            "service": "0x4444",
+            "instance": "0x0001",
+            "reliable": { "port": "30504" },
+            "unreliable": "30505"
+        }
+    ],
+    "routing": "service",
+    "service-discovery": { "enable": "true" }
+}
+```
+
+```json
+// client1.json
+{
+    "applications": [
+        { "name": "client1", "id": "0x4002" }
+    ],
+    "routing": "service",
+    "service-discovery": { "enable": "true" }
+}
+```
+
+```json
+// client2.json
+{
+    "applications": [
+        { "name": "client2", "id": "0x4003" }
+    ],
+    "routing": "service",
+    "service-discovery": { "enable": "true" }
+}
+```
+
+如果是多个 service 进程,比如 `service_a` 和 `service_b`,也仍然只能有一个 routing-manager:
+
+```json
+// service_a.json
+{
+    "applications": [
+        { "name": "service_a", "id": "0x5001" }
+    ],
+    "services": [
+        {
+            "service": "0x1111",
+            "instance": "0x0001",
+            "reliable": { "port": "30511" }
+        }
+    ],
+    "routing": "service_a",
+    "service-discovery": { "enable": "true" }
+}
+```
+
+```json
+// service_b.json
+{
+    "applications": [
+        { "name": "service_b", "id": "0x5002" }
+    ],
+    "services": [
+        {
+            "service": "0x2222",
+            "instance": "0x0001",
+            "reliable": { "port": "30521" }
+        }
+    ],
+    "routing": "service_a",
+    "service-discovery": { "enable": "true" }
+}
+```
+
+这里 `service_a` 是 routing-manager,所以 `service_b` 和所有 client 的 `"routing"` 都要写 `"service_a"`。
+
+注意:
+
+- `applications[].id` 是 Client-ID,每个 application 必须唯一。
+- `services[].service` 是 Service-ID,按业务服务唯一规划。
+- 多个 service 不能监听同一个 TCP/UDP 端口。
+- `VSOMEIP_APPLICATION_NAME` 必须和当前进程 JSON 里的 `applications[].name` 完全一致。
 
 ### 安全 (`security`) 块
 
